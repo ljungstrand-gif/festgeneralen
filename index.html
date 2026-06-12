@@ -80,6 +80,11 @@ main { padding: 14px; max-width: 560px; margin: 0 auto; }
 .ans { font-weight: 700; color: var(--green); text-align: right; filter: blur(6px);
   transition: filter .15s; cursor: pointer; user-select: none; min-width: 90px; }
 .ans.shown { filter: none; }
+.qfull { padding: 11px 0; border-bottom: 1px solid #2c2c40; }
+.qfull:last-child { border-bottom: none; }
+.qfull .qtext { font-weight: 600; font-size: 16px; }
+.qfull .opts { color: var(--dim); font-size: 14px; margin: 3px 0 5px; }
+.qfull .ans { text-align: left; display: inline-block; min-width: 0; padding: 2px 0; }
 .hint { font-size: 13px; color: var(--dim); margin: 0 0 10px; }
 .warn { background: #3a3320; border: 1px solid #6b5b22; border-radius: 10px; padding: 10px 12px;
   font-size: 14px; margin-bottom: 12px; }
@@ -252,22 +257,22 @@ const EVENTS = [
 
 const QUIZ = {
   idiot: [
-    ["1. Kung utan mustasch i kortleken", "Hjärter kung"],
-    ["2. Toarulle utrullad", "30 meter"],
-    ["3. Norska för snabel-a", "Alfakrull"],
-    ["4. Tändstickor i en ask", "40 st"],
-    ["5. Emil i Lönneberga på tyska", "Michel aus Lönneberga"],
-    ["6. Russin i champagne", "Åker upp och ner"],
-    ["7. Flygplatser i världen", "44 000"],
-    ["8. Bag-in-box-andel på Systembolaget", "55 %"],
-    ["9. Pasta per italienare och år", "25 kg"],
-    ["10. Basketkorgens höjd", "305 cm"],
-    ["11. Bröllop i Las Vegas per dag", "300"],
-    ["12. Mest utlånade boken på Guantanamo Bay", "Harry Potter"],
-    ["13. Avstånd till horisonten från stranden", "5 km"],
-    ["14. Besökare, Astrid Lindgrens värld/år", "540 000"],
-    ["15. Antal böcker av Astrid Lindgren", "34 st"],
-    ["16. Antal Disneyfilmer", "60 st"],
+    ["1. I en kortlek finns 4 kungar — vilken har INTE en mustasch?", "Hjärter kung · Spader kung · Klöver kung", "Hjärter kung"],
+    ["2. Hur lång utrullad är en normal toarulle?", "20 meter · 30 meter · 40 meter", "30 meter"],
+    ["3. Vad är det norska namnet för snabel-a?", "Krulle-a · Vhetebolle · Alfakrull", "Alfakrull"],
+    ["4. Hur många tändstickor finns det i en ask?", "30 st · 40 st · 50 st", "40 st"],
+    ["5. Vad heter Emil i Lönneberga i Tyskland?", "Michel aus Lönneberga · Bruno aus Lönneberga · Hans aus Lönneberga", "Michel aus Lönneberga"],
+    ["6. Vad händer om man stoppar ner ett russin i ett glas champagne?", "Det flyter · Det sjunker · Det åker upp och ner upprepade gånger", "Det åker upp och ner upprepade gånger"],
+    ["7. Hur många flygplatser finns det i världen?", "34 000 · 44 000 · 54 000", "44 000"],
+    ["8. Hur stor andel av allt vin som säljs på Systembolaget säljs i bag-in-box?", "30 % · 55 % · 75 %", "55 %"],
+    ["9. Hur många kg pasta äter en italienare på 1 år?", "15 kg · 25 kg · 45 kg", "25 kg"],
+    ["10. Hur högt över golvet ska en basketkorg sitta?", "305 cm · 315 cm · 325 cm", "305 cm"],
+    ["11. Hur många bröllop hålls det i Las Vegas varje dag?", "300 · 400 · 600", "300"],
+    ["12. Vilken var den mest utlånade boken på Guantanamo Bay?", "Harry Potter · Bibeln · Trollkarlen från Oz", "Harry Potter"],
+    ["13. Du står på en strand och ser horisonten — hur långt är det dit?", "5 km · 50 km · 100 km", "5 km"],
+    ["14. Hur många besökare har Astrid Lindgrens värld varje år?", "340 000 · 440 000 · 540 000", "540 000"],
+    ["15. Hur många böcker har Astrid Lindgren skrivit?", "34 st · 54 st · 74 st", "34 st"],
+    ["16. Hur många Disneyfilmer har gjorts?", "60 st · 80 st · 100 st", "60 st"],
   ],
   emoji: [
     ["1", "Lady och Lufsen"], ["2", "Aladdin"], ["3", "Svärdet i stenen"], ["4", "Hitta Nemo"],
@@ -504,7 +509,12 @@ function renderQuiz(id, rows) {
     `<div class="qrow"><div class="q">${q}</div><div class="ans" onclick="this.classList.toggle('shown')">${a}</div></div>`
   ).join("");
 }
-renderQuiz("idiot", QUIZ.idiot);
+document.getElementById("quiz-idiot").innerHTML = QUIZ.idiot.map(([q, opts, a]) =>
+  `<div class="qfull">
+    <div class="qtext">${q}</div>
+    <div class="opts">${opts}</div>
+    <div class="ans" onclick="this.classList.toggle('shown')">✓ ${a}</div>
+  </div>`).join("");
 renderQuiz("emoji", QUIZ.emoji.map(([n, a]) => ["Film " + n, a]));
 renderQuiz("musik", QUIZ.musik);
 
