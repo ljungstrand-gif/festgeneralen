@@ -54,6 +54,13 @@ main { padding: 14px; max-width: 560px; margin: 0 auto; }
 .event.past { opacity: .38; }
 .event.now { background: #2c2750; border-radius: 10px; padding: 11px 10px; margin: 0 -6px; }
 .event.now .what::after { content: " ← NU"; color: var(--gold); font-size: 12px; font-weight: 800; }
+.event.linked { cursor: pointer; }
+.event .chev { margin-left: auto; align-self: center; color: var(--dim); font-size: 22px; padding-left: 8px; }
+#nu-banner.linked { cursor: pointer; }
+.card, details { scroll-margin-top: 76px; }
+.flash { animation: flash 1.8s ease; }
+@keyframes flash { 0%, 35% { box-shadow: 0 0 0 3px var(--gold); } 100% { box-shadow: 0 0 0 3px transparent; } }
+.jumplink { color: var(--gold); text-decoration: underline; cursor: pointer; }
 
 /* ---- Manus ---- */
 .manus li { margin: 10px 0; font-size: 18px; }
@@ -136,8 +143,9 @@ nav button.active { color: var(--gold); }
     <div class="title" id="nu-title">Festen har inte börjat</div>
     <div class="next" id="nu-next"></div>
   </div>
+  <p class="hint">Tryck på en punkt i schemat så hoppar du direkt till rätt ställe i appen.</p>
   <div class="card" id="schema-list"></div>
-  <div class="card">
+  <div class="card" id="card-pack">
     <h2>📋 Packlista innan festen</h2>
     <div id="packlista"></div>
   </div>
@@ -145,7 +153,7 @@ nav button.active { color: var(--gold); }
 
 <!-- ================= MANUS ================= -->
 <section class="tab" id="tab-manus">
-  <div class="card">
+  <div class="card" id="card-valkomst">
     <h2>🎤 Ditt välkomstmanus — 18:00</h2>
     <ol class="manus">
       <li>Presentera dig som <b>kvällens fest-general</b> och hälsa alla välkomna</li>
@@ -153,10 +161,10 @@ nav button.active { color: var(--gold); }
       <li class="quote">”Klockan 01 ska det tyvärr vara tyst — men fram till dess kan det vara ett jävla liv!”</li>
       <li>Baren hålls tidvis öppen — vid brist på personal är det bara att <b>ta för sig av både dryck och mat</b></li>
       <li>Dela in lagen: <b>5–6 personer per lag</b> (3 och 3)</li>
-      <li>Sen direkt vidare till <b>idiotfrågorna</b> 👉</li>
+      <li>Sen direkt vidare till <span class="jumplink" onclick="goTo('facit','#card-idiot')">idiotfrågorna</span> 👉</li>
     </ol>
   </div>
-  <div class="card">
+  <div class="card" id="card-mat">
     <h2>💡 Bra att säga vid maten — 18:45</h2>
     <p>Du anvisar vilket bord som tar mat först, sen nästa osv. Bestäm ordningen i förväg eller lotta!</p>
   </div>
@@ -166,20 +174,20 @@ nav button.active { color: var(--gold); }
 <section class="tab" id="tab-facit">
   <p class="hint">Tryck på ett svar för att visa det. Suddigt = dolt för tjuvkikare.</p>
 
-  <div class="card">
+  <div class="card" id="card-idiot">
     <div class="quiz-head"><h2>🧠 Idiotfrågor — 18:15</h2>
       <button class="reveal-all" data-quiz="idiot">Visa alla</button></div>
     <div id="quiz-idiot"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="card-emoji">
     <div class="quiz-head"><h2>😀 Emoji: Gissa Disney-filmen</h2>
       <button class="reveal-all" data-quiz="emoji">Visa alla</button></div>
     <div class="warn">⚠️ Står inte i agendan — kör som mingelaktivitet 17:30 eller under efterrätten. Kolla med Patrik!</div>
     <div id="quiz-emoji"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="card-musik">
     <div class="quiz-head"><h2>🎵 Musikquiz — 19:30</h2>
       <button class="reveal-all" data-quiz="musik">Visa alla</button></div>
     <div class="warn">⚠️ Svarsblanketten har 18 rader men det är bara 15 låtar — säg åt lagen att fylla i rad 1–15. Poängtips: 1 p för filmen + 1 p för låten = max 30 p.</div>
@@ -222,14 +230,22 @@ nav button.active { color: var(--gold); }
 <script>
 /* =================== DATA =================== */
 const EVENTS = [
-  { t: "17:30", what: "Gäster anländer & mingel", role: "Patrik & Johanna hälsar välkomna, drinkar serveras. Alla drar ett kort ur lådan och letar upp sin kort-match för att hitta sin plats." },
-  { t: "18:00", what: "DU tar över — välkomstmanus", role: "Presentera dig som fest-general. Se fliken Manus!" },
-  { t: "18:15", what: "Idiotfrågor", role: "Dela ut frågeblad + pennor. Facit under fliken Facit." },
-  { t: "18:45", what: "Mat serveras", role: "DU anvisar vilket bord som tar mat i vilken ordning." },
-  { t: "19:00", what: "2 festvisor", role: "Förslag: ”Välkommen hit” + ”Vi skall festa”." },
-  { t: "19:30", what: "Musikquiz", role: "Spela 15 låtar, dela ut svarsblanketter." },
-  { t: "20:30", what: "Efterrätt, kaffe, avec", role: "Lugn stund — bra läge att rätta quizen." },
-  { t: "20:35", what: "Festvisor", role: "Fler ur sånghäftet." },
+  { t: "17:30", what: "Gäster anländer & mingel", role: "Patrik & Johanna hälsar välkomna, drinkar serveras. Alla drar ett kort ur lådan och letar upp sin kort-match för att hitta sin plats. Emoji-quizet kan ligga på borden →",
+    link: { tab: "facit", sel: "#card-emoji" } },
+  { t: "18:00", what: "DU tar över — välkomstmanus", role: "Presentera dig som fest-general. Tryck här för manuset →",
+    link: { tab: "manus", sel: "#card-valkomst" } },
+  { t: "18:15", what: "Idiotfrågor", role: "Dela ut frågeblad + pennor. Tryck här för facit →",
+    link: { tab: "facit", sel: "#card-idiot" } },
+  { t: "18:45", what: "Mat serveras", role: "DU anvisar vilket bord som tar mat i vilken ordning →",
+    link: { tab: "manus", sel: "#card-mat" } },
+  { t: "19:00", what: "2 festvisor", role: "Förslag: ”Välkommen hit” + ”Vi skall festa”. Tryck för texterna →",
+    link: { tab: "visor", sel: "#visa-1", open: ["visa-1", "visa-3"] } },
+  { t: "19:30", what: "Musikquiz", role: "Spela 15 låtar, dela ut svarsblanketter. Tryck här för facit →",
+    link: { tab: "facit", sel: "#card-musik" } },
+  { t: "20:30", what: "Efterrätt, kaffe, avec", role: "Lugn stund — bra läge att räkna ihop poängen →",
+    link: { tab: "poang" } },
+  { t: "20:35", what: "Festvisor", role: "Fler ur sånghäftet →",
+    link: { tab: "visor" } },
   { t: "21:00", what: "Bord plockas undan", role: "Hjälp till — sen är det fest!" },
   { t: "01:00", what: "TYST 🤫", role: "Påminn i god tid innan." },
 ];
@@ -451,10 +467,33 @@ function renderSchema() {
   }
 
   document.getElementById("schema-list").innerHTML = EVENTS.map((e, i) =>
-    `<div class="event ${i < currentIdx ? "past" : ""} ${i === currentIdx ? "now" : ""}">
+    `<div class="event ${i < currentIdx ? "past" : ""} ${i === currentIdx ? "now" : ""} ${e.link ? "linked" : ""}"
+      ${e.link ? `onclick="evClick(${i})"` : ""}>
       <div class="time">${e.t}</div>
       <div><div class="what">${e.what}</div><div class="role">${e.role}</div></div>
+      ${e.link ? `<div class="chev">›</div>` : ""}
     </div>`).join("");
+
+  const nuBanner = document.getElementById("nu-banner");
+  const target = currentIdx === -1 ? EVENTS[0] : EVENTS[currentIdx];
+  nuBanner.classList.toggle("linked", !!target.link);
+  nuBanner.onclick = target.link ? () => goTo(target.link.tab, target.link.sel, target.link.open) : null;
+}
+
+window.evClick = (i) => { const l = EVENTS[i].link; if (l) goTo(l.tab, l.sel, l.open); };
+
+function goTo(tab, sel, open) {
+  document.querySelector(`nav button[data-tab="${tab}"]`).click();
+  (open || []).forEach(id => { const d = document.getElementById(id); if (d) d.open = true; });
+  if (!sel) return;
+  setTimeout(() => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    el.classList.remove("flash");
+    void el.offsetWidth;
+    el.classList.add("flash");
+  }, 80);
 }
 renderSchema();
 setInterval(renderSchema, 30000);
@@ -532,8 +571,8 @@ window.togglePack = (i) => {
 renderPack();
 
 /* =================== VISOR =================== */
-document.getElementById("visor-list").innerHTML = VISOR.map(v =>
-  `<details><summary>${v.nr} ${v.title}${v.mel ? `<span class="mel">${v.mel}</span>` : ""}</summary>
+document.getElementById("visor-list").innerHTML = VISOR.map((v, i) =>
+  `<details id="visa-${i + 1}"><summary>${v.nr} ${v.title}${v.mel ? `<span class="mel">${v.mel}</span>` : ""}</summary>
     <div class="lyrics">${v.text}</div></details>`).join("");
 
 /* =================== SKÄRM PÅ =================== */
