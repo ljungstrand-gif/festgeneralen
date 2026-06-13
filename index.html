@@ -66,6 +66,9 @@ main { padding: 14px; max-width: 560px; margin: 0 auto; }
 .manus li { margin: 10px 0; font-size: 18px; }
 .quote { background: var(--card2); border-left: 4px solid var(--gold); border-radius: 8px;
   padding: 10px 14px; font-style: italic; margin: 10px 0; font-size: 18px; }
+.mnote { color: var(--dim); font-size: 15px; margin: 9px 0; }
+.mnote::before { content: "▸ "; color: var(--accent); font-weight: 700; }
+#manus-list .bigbtn { display: block; width: 100%; margin-top: 12px; }
 
 /* ---- Facit ---- */
 .quiz-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -146,6 +149,10 @@ details .lyrics { padding: 0 16px 16px; white-space: pre-line; color: #d6d3e6; f
 .doc .emo { display: inline-block; width: 50%; padding: 4px 0; font-size: 15px; }
 .doc .note { background: #3a3320; border: 1px solid #6b5b22; border-radius: 8px; padding: 8px 10px;
   font-size: 13px; margin: 8px 0; }
+.doc .manus-doc { margin: 10px 0 16px; }
+.doc .manus-doc .md-h { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.doc .manus-doc .quote { font-size: 15px; }
+.doc .manus-doc .mnote { font-size: 14px; }
 
 /* ---- Emoji-lek ---- */
 .emoji-clue { font-size: 27px; line-height: 1.35; margin-bottom: 4px; }
@@ -198,21 +205,8 @@ nav button.active { color: var(--gold); }
 
 <!-- ================= MANUS ================= -->
 <section class="tab" id="tab-manus">
-  <div class="card" id="card-valkomst">
-    <h2>🎤 Ditt välkomstmanus — 18:00</h2>
-    <ol class="manus">
-      <li>Presentera dig som <b>kvällens fest-general</b> och hälsa alla välkomna</li>
-      <li>Visa <b>nödutrymningsvägar</b> och förhållningsregler</li>
-      <li class="quote">”Klockan 01 ska det tyvärr vara tyst — men fram till dess kan det vara ett jävla liv!”</li>
-      <li>Baren hålls tidvis öppen — vid brist på personal är det bara att <b>ta för sig av både dryck och mat</b></li>
-      <li>Dela in lagen: <b>5–6 personer per lag</b> (3 och 3)</li>
-      <li>Sen direkt vidare till <span class="jumplink" onclick="goTo('idiot','#card-idiot')">idiotfrågorna</span> 👉</li>
-    </ol>
-  </div>
-  <div class="card" id="card-mat">
-    <h2>💡 Bra att säga vid maten — 18:45</h2>
-    <p>Du anvisar vilket bord som tar mat först, sen nästa osv. Bestäm ordningen i förväg eller lotta!</p>
-  </div>
+  <p class="hint">Manus för varje moment — det du kan säga högt står i citat, praktiska tips under. Tryck på en tid i schemat för att hoppa hit.</p>
+  <div id="manus-list"></div>
 </section>
 
 <!-- ================= IDIOTFRÅGOR ================= -->
@@ -295,32 +289,99 @@ nav button.active { color: var(--gold); }
 const EVENTS = [
   { t: "17:30", what: "Gäster anländer & mingel",
     role: "Patrik och Johanna hälsar alla välkomna. Drinkar serveras och fylls på. Alla får dra ett kort ur lådan, minglar, och letar sedan upp sitt respektive kort för att hitta sin plats. (Emoji-quizet kan ligga på borden — tryck →)",
-    link: { tab: "emoji", sel: "#card-emoji" } },
+    link: { tab: "manus", sel: "#manus-1730" } },
   { t: "18:00", what: "DU tar över — välkomstmanus",
     role: "Emil presenterar sig som kvällens fest-general och hälsar alla välkomna. Visar nödutrymningsgångar och förhållningsregler: klockan 01 skall det tyvärr vara tyst, men fram till dess kan det vara ett jävla liv! Baren kommer tidvis att hållas öppen — vid brist på personal är det bara att ta för sig av både dryck och mat. Dela upp lagvis: 5–6 i varje lag (3 och 3).",
-    link: { tab: "manus", sel: "#card-valkomst" } },
+    link: { tab: "manus", sel: "#manus-1800" } },
   { t: "18:15", what: "Idiotfrågor",
     role: "Idiotfrågor. Dela ut frågeblad och pennor.",
-    link: { tab: "idiot", sel: "#card-idiot" } },
+    link: { tab: "manus", sel: "#manus-1815" } },
   { t: "18:45", what: "Mat serveras",
     role: "Mat serveras. Emil anvisar vilket bord som skall ta mat (bestäm ordningen i förväg eller lotta).",
-    link: { tab: "manus", sel: "#card-mat" } },
+    link: { tab: "manus", sel: "#manus-1845" } },
   { t: "19:00", what: "2 festvisor",
     role: "2 st festvisor. Förslag: ”Välkommen hit” + ”Vi skall festa”.",
-    link: { tab: "visor", sel: "#visa-1", open: ["visa-1", "visa-3"] } },
+    link: { tab: "manus", sel: "#manus-1900" } },
   { t: "19:30", what: "Musikquiz",
     role: "Musikquiz. Spela 15 låtar och dela ut svarsblanketter.",
-    link: { tab: "musik", sel: "#card-musik" } },
+    link: { tab: "manus", sel: "#manus-1930" } },
   { t: "20:30", what: "Efterrätt, kaffe, avec",
     role: "Efterrätt, kaffe och avec. Lugn stund — bra läge att räkna ihop poängen.",
-    link: { tab: "poang" } },
+    link: { tab: "manus", sel: "#manus-2030" } },
   { t: "20:35", what: "Festvisor",
     role: "Festvisor — fler ur sånghäftet.",
-    link: { tab: "visor" } },
-  { t: "21:00", what: "Bord plockas undan",
-    role: "Bord plockas undan — sen är det fest!" },
+    link: { tab: "manus", sel: "#manus-2035" } },
+  { t: "21:00", what: "Bord plockas undan & prisutdelning",
+    role: "Bord plockas undan — sen är det fest! Passa på att kora vinnaren av kvällens tävlingar.",
+    link: { tab: "manus", sel: "#manus-2100" } },
   { t: "01:00", what: "TYST 🤫",
-    role: "Klockan 01 skall det vara tyst. Påminn gästerna i god tid innan." },
+    role: "Klockan 01 skall det vara tyst. Påminn gästerna i god tid innan.",
+    link: { tab: "manus", sel: "#manus-0100" } },
+];
+
+const MANUS = [
+  { t: "17:30", icon: "🥂", title: "Mingel & ankomst", steps: [
+    { do: "Patrik och Johanna hälsar välkomna och bjuder på drinkar. Du håller låg profil men finns till hands." },
+    { say: "Välkomna! Dra ett kort ur lådan — sen letar ni upp någon med samma kort. Det avgör var ni sitter." },
+    { do: "Lägg gärna fram emoji-quizet på borden som mingellek medan folk droppar in. Stäm av med Patrik först." },
+  ], jump: { label: "Öppna emoji-leken", tab: "emoji", sel: "#card-emoji" } },
+
+  { t: "18:00", icon: "🎤", title: "Välkomsttal — du tar över", steps: [
+    { say: "Hej och hjärtligt välkomna allihop! Jag heter Emil och är kvällens fest-general." },
+    { say: "Ett stort grattis till Karl-Patrik och Johanna som båda fyllt 40 — det ska vi fira ordentligt ikväll!" },
+    { say: "Snabbt och praktiskt: nödutgångarna finns där borta. Och en sak — klockan 01 måste det tyvärr vara tyst. Men fram till dess kan det vara ett jävla liv!" },
+    { say: "Baren håller öppet emellanåt. Står det ingen i baren är det bara att ta för sig själv — både dryck och mat." },
+    { say: "Ikväll tävlar vi i lag, så vi delar in oss: 5–6 personer per lag." },
+    { do: "Dela in lagen. Säg sedan: ”Då kör vi igång — först ut: idiotfrågor!”" },
+  ], jump: { label: "Starta idiotfrågorna", tab: "idiot", sel: "#card-idiot" } },
+
+  { t: "18:15", icon: "🧠", title: "Idiotfrågor", steps: [
+    { say: "Dags för kvällens första utmaning — idiotfrågor! Helt värdelös kunskap som garanterat inte hjälper er i livet." },
+    { say: "Varje lag får ett frågeblad och en penna. 16 frågor, tre alternativ på varje — kryssa för det ni tror är rätt." },
+    { say: "Diskutera lågmält så de andra lagen inte snor era svar. Lycka till!" },
+    { do: "Dela ut frågeblad + pennor. 1 poäng per rätt svar. Rätta tillsammans efteråt — öppna facit nedan." },
+  ], jump: { label: "Öppna facit", tab: "idiot", sel: "#card-idiot" } },
+
+  { t: "18:45", icon: "🍽️", title: "Mat serveras", steps: [
+    { say: "Nu luktar det gott — dags att äta! För att slippa trängsel vid buffén släpper vi fram ett bord i taget." },
+    { say: "Vi börjar med… det där bordet! Varsågoda. Sen tar vi nästa." },
+    { do: "Bestäm bordsordningen i förväg eller lotta. Passa på att räkna ihop idiotfrågorna medan folk äter." },
+  ] },
+
+  { t: "19:00", icon: "🎶", title: "2 festvisor", steps: [
+    { say: "Hoppas det smakar! Medan vi äter värmer vi upp stämbanden med ett par visor." },
+    { say: "Slå upp ”Välkommen hit” i häftet — sjung med allihop! Sen tar vi ”Vi skall festa”." },
+    { do: "Texterna finns under Visor. Förslag: ① Välkommen hit + ③ Vi skall festa." },
+  ], jump: { label: "Öppna visorna", tab: "visor", sel: "#visa-1", open: ["visa-1", "visa-3"] } },
+
+  { t: "19:30", icon: "🎵", title: "Musikquiz", steps: [
+    { say: "Nu blir det musikquiz! Jag spelar 15 låtar — alla ur kända filmer. Ni ska gissa både vilken film och vilken låt eller artist det är." },
+    { say: "Skriv svaren på blanketten, rad 1 till 15. Det finns 18 rader men bara 15 låtar — strunta i de tre sista." },
+    { say: "1 poäng för rätt film, 1 för rätt låt. Max 30 poäng. Kör hårt!" },
+    { do: "Spela låtarna i ordning. Facit finns under Musik." },
+  ], jump: { label: "Öppna musikquizet", tab: "musik", sel: "#card-musik" } },
+
+  { t: "20:30", icon: "☕", title: "Efterrätt, kaffe & avec", steps: [
+    { say: "Nu blir det lite lugnare — efterrätt, kaffe och avec serveras. Ta det skönt en stund." },
+    { say: "Passa på att fundera på hur det gått i tävlingarna… snart avslöjar vi vinnarna!" },
+    { do: "Perfekt läge att räkna ihop alla poäng. Öppna Poäng-fliken." },
+  ], jump: { label: "Öppna poängräkningen", tab: "poang" } },
+
+  { t: "20:35", icon: "🎶", title: "Festvisor", steps: [
+    { say: "Med kaffet i hand tar vi några visor till!" },
+    { do: "Välj fritt ur sånghäftet — t.ex. En sockerbagare, Sommar och sol, Jag fångade en räv." },
+  ], jump: { label: "Öppna visorna", tab: "visor" } },
+
+  { t: "21:00", icon: "🏆", title: "Bord undan & prisutdelning", steps: [
+    { say: "Nu börjar vi plocka undan borden — för nu ska det dansas!" },
+    { say: "Men först, det ni väntat på… vinnaren av kvällens tävlingar är… [trumvirvel] … grattis!" },
+    { do: "Kolla ställningen i Poäng-fliken och dela ut ev. pris. Sen är det fritt fram — musik och dans!" },
+  ], jump: { label: "Se ställningen", tab: "poang" } },
+
+  { t: "01:00", icon: "🤫", title: "Tyst — kvällen avrundas", steps: [
+    { say: "Tack för en helt fantastisk kväll! Nu måste vi tyvärr dämpa oss — klockan är 01 och då ska det vara tyst." },
+    { do: "Påminn gästerna i god tid, gärna 15–30 minuter innan." },
+  ] },
 ];
 
 const QUIZ = {
@@ -673,6 +734,20 @@ document.getElementById("visor-list").innerHTML = VISOR.map((v, i) =>
   `<details id="visa-${i + 1}"><summary>${v.nr} ${v.title}${v.mel ? `<span class="mel">${v.mel}</span>` : ""}</summary>
     <div class="lyrics">${v.text}</div></details>`).join("");
 
+/* =================== MANUS =================== */
+document.getElementById("manus-list").innerHTML = MANUS.map((m, i) =>
+  `<div class="card" id="manus-${m.t.replace(":", "")}">
+    <h2>${m.icon} ${m.t} — ${m.title}</h2>
+    ${m.steps.map(s => s.say ? `<div class="quote">”${s.say}”</div>` : `<p class="mnote">${s.do}</p>`).join("")}
+    ${m.jump ? `<button class="bigbtn" data-mi="${i}">${m.jump.label} →</button>` : ""}
+  </div>`).join("");
+document.querySelectorAll("#manus-list .bigbtn").forEach(b => {
+  b.addEventListener("click", () => {
+    const j = MANUS[+b.dataset.mi].jump;
+    goTo(j.tab, j.sel || null, j.open || null);
+  });
+});
+
 /* =================== ALLT — hela dokumentet =================== */
 function renderDoc() {
   const timeline = EVENTS.map(e =>
@@ -686,6 +761,10 @@ function renderDoc() {
   const musik = QUIZ.musik.map(([f, s]) => `<div class="fa"><span>${f}</span><b>${s}</b></div>`).join("");
   const visor = VISOR.map(v => `<li><b>${v.title}</b>${v.mel ? ` — ${v.mel.replace(/^Mel: /, "")}` : ""}</li>`).join("");
   const pack = PACKLISTA.map(p => `<li>${p}</li>`).join("");
+  const manus = MANUS.map(m =>
+    `<div class="manus-doc"><div class="md-h">${m.icon} ${m.t} — ${m.title}</div>` +
+    m.steps.map(s => s.say ? `<div class="quote">”${s.say}”</div>` : `<p class="mnote">${s.do}</p>`).join("") +
+    `</div>`).join("");
 
   document.getElementById("doc-body").innerHTML = `
     <h3>🎉 Fest-generalens körschema — Ålabodarna 13 juni</h3>
@@ -693,14 +772,8 @@ function renderDoc() {
     <h3>⏱️ Tidslinje</h3>
     <table><tbody>${timeline}</tbody></table>
 
-    <h3>🎤 Ditt välkomstmanus (18:00)</h3>
-    <ol>
-      <li>Presentera dig som <b>kvällens fest-general</b> och hälsa alla välkomna</li>
-      <li>Visa <b>nödutrymningsvägar</b> och förhållningsregler</li>
-      <li>”Klockan 01 ska det tyvärr vara tyst — men fram till dess kan det vara ett jävla liv!”</li>
-      <li>Baren hålls tidvis öppen — vid brist på personal är det bara att <b>ta för sig av både dryck och mat</b></li>
-      <li>Dela in lagen: <b>5–6 personer per lag</b> (3 och 3)</li>
-    </ol>
+    <h3>🎤 Manus — vad du säger vid varje stopp</h3>
+    ${manus}
 
     <h3>🧠 Facit — Idiotfrågor (18:15)</h3>
     ${idiot}
