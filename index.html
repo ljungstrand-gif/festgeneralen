@@ -139,6 +139,10 @@ details .lyrics { padding: 0 16px 16px; white-space: pre-line; color: #d6d3e6; f
   border-bottom: 1px solid #2c2c40; font-size: 15px; align-items: baseline; }
 .doc .fa span { flex: 1; }
 .doc .fa b { color: var(--green); text-align: right; flex: 0 0 auto; max-width: 46%; }
+.doc .fa-q { padding: 9px 0; border-bottom: 1px solid #2c2c40; }
+.doc .fa-q .fq { font-weight: 600; font-size: 15px; }
+.doc .fa-q .fo { color: var(--dim); font-size: 13px; margin: 3px 0; }
+.doc .fa-q .fans { color: var(--green); font-weight: 700; font-size: 15px; }
 .doc .emo { display: inline-block; width: 50%; padding: 4px 0; font-size: 15px; }
 .doc .note { background: #3a3320; border: 1px solid #6b5b22; border-radius: 8px; padding: 8px 10px;
   font-size: 13px; margin: 8px 0; }
@@ -159,8 +163,8 @@ nav button.active { color: var(--gold); }
   #tab-allt { display: block !important; }
   .doc h3 { color: #000; }
   .doc table td.t { color: #000; }
-  .doc .fa b { color: #000; }
-  .doc table td .r, .doc .note { color: #333; }
+  .doc .fa b, .doc .fa-q .fans { color: #000; }
+  .doc table td .r, .doc .note, .doc .fa-q .fo { color: #333; }
 }
 </style>
 </head>
@@ -642,7 +646,8 @@ function renderDoc() {
     `<tr><td class="t">${e.t}</td><td>${e.what}${e.role ? `<div class="r">${e.role}</div>` : ""}</td></tr>`
   ).join("");
 
-  const idiot = QUIZ.idiot.map(([q, , a]) => `<div class="fa"><span>${q}</span><b>${a}</b></div>`).join("");
+  const idiot = QUIZ.idiot.map(([q, opts, a]) =>
+    `<div class="fa-q"><div class="fq">${q}</div><div class="fo">${opts}</div><div class="fans">✓ ${a}</div></div>`).join("");
   const emoji = QUIZ.emoji.map(([n, a]) => `<span class="emo">${n}. ${a}</span>`).join("");
   const musik = QUIZ.musik.map(([f, s]) => `<div class="fa"><span>${f}</span><b>${s}</b></div>`).join("");
   const visor = VISOR.map(v => `<li><b>${v.title}</b>${v.mel ? ` — ${v.mel.replace(/^Mel: /, "")}` : ""}</li>`).join("");
