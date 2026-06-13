@@ -196,6 +196,11 @@ nav button.active { color: var(--gold); }
     <div class="next" id="nu-next"></div>
   </div>
   <p class="hint">Tryck på en punkt i schemat så hoppar du direkt till rätt ställe i appen.</p>
+  <div class="card" id="reminder-tom" style="border:1px solid var(--gold)">
+    <h2>🎙️ Kom ihåg — Tom Brandts tal</h2>
+    <p style="margin:0 0 6px"><b>Tom Brandt vill hålla tal någon gång under kvällen.</b> Håll utkik efter ett bra läge och ge honom ordet. Bra tillfällen: under maten (18:45) eller vid kaffet/avec (20:30).</p>
+    <div class="quote">”Vi har en som vill säga några ord — varsågod, Tom!”</div>
+  </div>
   <div class="card" id="schema-list"></div>
   <div class="card" id="card-pack">
     <h2>📋 Packlista innan festen</h2>
@@ -347,6 +352,7 @@ const MANUS = [
     { say: "Nu luktar det gott — dags att äta! För att slippa trängsel vid buffén släpper vi fram ett bord i taget." },
     { say: "Vi börjar med… det där bordet! Varsågoda. Sen tar vi nästa." },
     { do: "Bestäm bordsordningen i förväg eller lotta. Passa på att räkna ihop idiotfrågorna medan folk äter." },
+    { do: "🎙️ Bra läge att ge Tom Brandt ordet om han vill hålla sitt tal nu." },
   ] },
 
   { t: "19:00", icon: "🎶", title: "2 festvisor", steps: [
@@ -366,6 +372,7 @@ const MANUS = [
     { say: "Nu blir det lite lugnare — efterrätt, kaffe och avec serveras. Ta det skönt en stund." },
     { say: "Passa på att fundera på hur det gått i tävlingarna… snart avslöjar vi vinnarna!" },
     { do: "Perfekt läge att räkna ihop alla poäng. Öppna Poäng-fliken." },
+    { do: "🎙️ Också ett fint läge för Tom Brandts tal, om det inte hållits ännu." },
   ], jump: { label: "Öppna poängräkningen", tab: "poang" } },
 
   { t: "20:35", icon: "🎶", title: "Festvisor", steps: [
@@ -772,6 +779,7 @@ function renderDoc() {
 
     <h3>⏱️ Tidslinje</h3>
     <table><tbody>${timeline}</tbody></table>
+    <div class="note">🎙️ Kom ihåg: Tom Brandt vill hålla tal någon gång under kvällen — ge honom ordet vid ett bra läge (t.ex. under maten 18:45 eller vid kaffet 20:30).</div>
 
     <h3>🎤 Manus — vad du säger vid varje stopp</h3>
     ${manus}
