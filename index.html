@@ -276,24 +276,34 @@ nav button.active { color: var(--gold); }
 <script>
 /* =================== DATA =================== */
 const EVENTS = [
-  { t: "17:30", what: "Gäster anländer & mingel", role: "Patrik & Johanna hälsar välkomna, drinkar serveras. Alla drar ett kort ur lådan och letar upp sin kort-match för att hitta sin plats. Emoji-quizet kan ligga på borden →",
+  { t: "17:30", what: "Gäster anländer & mingel",
+    role: "Patrik och Johanna hälsar alla välkomna. Drinkar serveras och fylls på. Alla får dra ett kort ur lådan, minglar, och letar sedan upp sitt respektive kort för att hitta sin plats. (Emoji-quizet kan ligga på borden — tryck →)",
     link: { tab: "facit", sel: "#card-emoji" } },
-  { t: "18:00", what: "DU tar över — välkomstmanus", role: "Presentera dig som fest-general. Tryck här för manuset →",
+  { t: "18:00", what: "DU tar över — välkomstmanus",
+    role: "Emil presenterar sig som kvällens fest-general och hälsar alla välkomna. Visar nödutrymningsgångar och förhållningsregler: klockan 01 skall det tyvärr vara tyst, men fram till dess kan det vara ett jävla liv! Baren kommer tidvis att hållas öppen — vid brist på personal är det bara att ta för sig av både dryck och mat. Dela upp lagvis: 5–6 i varje lag (3 och 3).",
     link: { tab: "manus", sel: "#card-valkomst" } },
-  { t: "18:15", what: "Idiotfrågor", role: "Dela ut frågeblad + pennor. Tryck här för facit →",
+  { t: "18:15", what: "Idiotfrågor",
+    role: "Idiotfrågor. Dela ut frågeblad och pennor.",
     link: { tab: "facit", sel: "#card-idiot" } },
-  { t: "18:45", what: "Mat serveras", role: "DU anvisar vilket bord som tar mat i vilken ordning →",
+  { t: "18:45", what: "Mat serveras",
+    role: "Mat serveras. Emil anvisar vilket bord som skall ta mat (bestäm ordningen i förväg eller lotta).",
     link: { tab: "manus", sel: "#card-mat" } },
-  { t: "19:00", what: "2 festvisor", role: "Förslag: ”Välkommen hit” + ”Vi skall festa”. Tryck för texterna →",
+  { t: "19:00", what: "2 festvisor",
+    role: "2 st festvisor. Förslag: ”Välkommen hit” + ”Vi skall festa”.",
     link: { tab: "visor", sel: "#visa-1", open: ["visa-1", "visa-3"] } },
-  { t: "19:30", what: "Musikquiz", role: "Spela 15 låtar, dela ut svarsblanketter. Tryck här för facit →",
+  { t: "19:30", what: "Musikquiz",
+    role: "Musikquiz. Spela 15 låtar och dela ut svarsblanketter.",
     link: { tab: "facit", sel: "#card-musik" } },
-  { t: "20:30", what: "Efterrätt, kaffe, avec", role: "Lugn stund — bra läge att räkna ihop poängen →",
+  { t: "20:30", what: "Efterrätt, kaffe, avec",
+    role: "Efterrätt, kaffe och avec. Lugn stund — bra läge att räkna ihop poängen.",
     link: { tab: "poang" } },
-  { t: "20:35", what: "Festvisor", role: "Fler ur sånghäftet →",
+  { t: "20:35", what: "Festvisor",
+    role: "Festvisor — fler ur sånghäftet.",
     link: { tab: "visor" } },
-  { t: "21:00", what: "Bord plockas undan", role: "Hjälp till — sen är det fest!" },
-  { t: "01:00", what: "TYST 🤫", role: "Påminn i god tid innan." },
+  { t: "21:00", what: "Bord plockas undan",
+    role: "Bord plockas undan — sen är det fest!" },
+  { t: "01:00", what: "TYST 🤫",
+    role: "Klockan 01 skall det vara tyst. Påminn gästerna i god tid innan." },
 ];
 
 const QUIZ = {
@@ -628,11 +638,9 @@ document.getElementById("visor-list").innerHTML = VISOR.map((v, i) =>
 
 /* =================== ALLT — hela dokumentet =================== */
 function renderDoc() {
-  const timeline = EVENTS.map(e => {
-    const r = e.role.replace(/\s*(Tryck h[äa]r f[öo]r[^.]*|Tryck f[öo]r texterna|Emoji-quizet kan ligga p[åa] borden|DU anvisar vilket bord som tar mat i vilken ordning)\s*→?\s*$/i, "")
-                     .replace(/\s*→\s*$/, "").trim();
-    return `<tr><td class="t">${e.t}</td><td>${e.what}${r ? `<div class="r">${r}</div>` : ""}</td></tr>`;
-  }).join("");
+  const timeline = EVENTS.map(e =>
+    `<tr><td class="t">${e.t}</td><td>${e.what}${e.role ? `<div class="r">${e.role}</div>` : ""}</td></tr>`
+  ).join("");
 
   const idiot = QUIZ.idiot.map(([q, , a]) => `<div class="fa"><span>${q}</span><b>${a}</b></div>`).join("");
   const emoji = QUIZ.emoji.map(([n, a]) => `<span class="emo">${n}. ${a}</span>`).join("");
