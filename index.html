@@ -122,14 +122,46 @@ details .lyrics { padding: 0 16px 16px; white-space: pre-line; color: #d6d3e6; f
 .check.done label { text-decoration: line-through; opacity: .45; }
 .check label { font-size: 16px; }
 
+/* ---- Allt / dokument ---- */
+.doc-tools { display: flex; gap: 8px; margin-bottom: 12px; }
+.doc-tools button { flex: 1; background: var(--accent); color: #fff; border: none; border-radius: 10px;
+  padding: 11px; font-size: 15px; font-weight: 700; }
+.doc h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--gold);
+  margin: 22px 0 8px; border-bottom: 1px solid #2c2c40; padding-bottom: 5px; }
+.doc h3:first-child { margin-top: 0; }
+.doc table { width: 100%; border-collapse: collapse; margin: 4px 0; }
+.doc table td { padding: 7px 6px; border-bottom: 1px solid #2c2c40; vertical-align: top; font-size: 15px; }
+.doc table td.t { font-weight: 700; color: var(--gold); white-space: nowrap; width: 52px; }
+.doc table td .r { color: var(--dim); font-size: 13px; margin-top: 2px; }
+.doc ol, .doc ul { margin: 4px 0; padding-left: 22px; }
+.doc li { margin: 5px 0; font-size: 15px; }
+.doc .fa { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0;
+  border-bottom: 1px solid #2c2c40; font-size: 15px; align-items: baseline; }
+.doc .fa span { flex: 1; }
+.doc .fa b { color: var(--green); text-align: right; flex: 0 0 auto; max-width: 46%; }
+.doc .emo { display: inline-block; width: 50%; padding: 4px 0; font-size: 15px; }
+.doc .note { background: #3a3320; border: 1px solid #6b5b22; border-radius: 8px; padding: 8px 10px;
+  font-size: 13px; margin: 8px 0; }
+
 /* ---- Nav ---- */
 nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: rgba(25,25,40,.96);
   backdrop-filter: blur(10px); border-top: 1px solid #2c2c40;
-  padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); z-index: 10; }
-nav button { flex: 1; background: none; border: none; color: var(--dim); font-size: 11px;
-  font-weight: 600; padding: 4px 0; }
-nav button .ico { display: block; font-size: 22px; margin-bottom: 1px; }
+  padding: 6px 2px calc(6px + env(safe-area-inset-bottom)); z-index: 10; }
+nav button { flex: 1; background: none; border: none; color: var(--dim); font-size: 10.5px;
+  font-weight: 600; padding: 4px 0; min-width: 0; }
+nav button .ico { display: block; font-size: 21px; margin-bottom: 1px; }
 nav button.active { color: var(--gold); }
+
+@media print {
+  header, nav, .doc-tools, #nu-banner, .hint { display: none !important; }
+  body { padding: 0; background: #fff; color: #000; }
+  .tab { display: none !important; }
+  #tab-allt { display: block !important; }
+  .doc h3 { color: #000; }
+  .doc table td.t { color: #000; }
+  .doc .fa b { color: #000; }
+  .doc table td .r, .doc .note { color: #333; }
+}
 </style>
 </head>
 <body>
@@ -222,6 +254,14 @@ nav button.active { color: var(--gold); }
   <div id="visor-list"></div>
 </section>
 
+<!-- ================= ALLT (hela dokumentet) ================= -->
+<section class="tab" id="tab-allt">
+  <div class="doc-tools">
+    <button onclick="window.print()">🖨️ Skriv ut / spara som PDF</button>
+  </div>
+  <div class="card doc" id="doc-body"></div>
+</section>
+
 </main>
 
 <nav>
@@ -230,6 +270,7 @@ nav button.active { color: var(--gold); }
   <button data-tab="facit"><span class="ico">✅</span>Facit</button>
   <button data-tab="poang"><span class="ico">🏆</span>Poäng</button>
   <button data-tab="visor"><span class="ico">🎵</span>Visor</button>
+  <button data-tab="allt"><span class="ico">📄</span>Allt</button>
 </nav>
 
 <script>
@@ -584,6 +625,56 @@ renderPack();
 document.getElementById("visor-list").innerHTML = VISOR.map((v, i) =>
   `<details id="visa-${i + 1}"><summary>${v.nr} ${v.title}${v.mel ? `<span class="mel">${v.mel}</span>` : ""}</summary>
     <div class="lyrics">${v.text}</div></details>`).join("");
+
+/* =================== ALLT — hela dokumentet =================== */
+function renderDoc() {
+  const timeline = EVENTS.map(e => {
+    const r = e.role.replace(/\s*(Tryck h[äa]r f[öo]r[^.]*|Tryck f[öo]r texterna|Emoji-quizet kan ligga p[åa] borden|DU anvisar vilket bord som tar mat i vilken ordning)\s*→?\s*$/i, "")
+                     .replace(/\s*→\s*$/, "").trim();
+    return `<tr><td class="t">${e.t}</td><td>${e.what}${r ? `<div class="r">${r}</div>` : ""}</td></tr>`;
+  }).join("");
+
+  const idiot = QUIZ.idiot.map(([q, , a]) => `<div class="fa"><span>${q}</span><b>${a}</b></div>`).join("");
+  const emoji = QUIZ.emoji.map(([n, a]) => `<span class="emo">${n}. ${a}</span>`).join("");
+  const musik = QUIZ.musik.map(([f, s]) => `<div class="fa"><span>${f}</span><b>${s}</b></div>`).join("");
+  const visor = VISOR.map(v => `<li><b>${v.title}</b>${v.mel ? ` — ${v.mel.replace(/^Mel: /, "")}` : ""}</li>`).join("");
+  const pack = PACKLISTA.map(p => `<li>${p}</li>`).join("");
+
+  document.getElementById("doc-body").innerHTML = `
+    <h3>🎉 Fest-generalens körschema — Ålabodarna 13 juni</h3>
+
+    <h3>⏱️ Tidslinje</h3>
+    <table><tbody>${timeline}</tbody></table>
+
+    <h3>🎤 Ditt välkomstmanus (18:00)</h3>
+    <ol>
+      <li>Presentera dig som <b>kvällens fest-general</b> och hälsa alla välkomna</li>
+      <li>Visa <b>nödutrymningsvägar</b> och förhållningsregler</li>
+      <li>”Klockan 01 ska det tyvärr vara tyst — men fram till dess kan det vara ett jävla liv!”</li>
+      <li>Baren hålls tidvis öppen — vid brist på personal är det bara att <b>ta för sig av både dryck och mat</b></li>
+      <li>Dela in lagen: <b>5–6 personer per lag</b> (3 och 3)</li>
+    </ol>
+
+    <h3>🧠 Facit — Idiotfrågor (18:15)</h3>
+    ${idiot}
+
+    <h3>😀 Facit — Emoji: Gissa Disney-filmen</h3>
+    <div class="note">⚠️ Står inte i agendan — kör som mingelaktivitet 17:30 eller under efterrätten. Kolla med Patrik!</div>
+    <div>${emoji}</div>
+
+    <h3>🎵 Facit — Musikquiz (19:30)</h3>
+    <div class="note">⚠️ Svarsblanketten har 18 rader men det är bara 15 låtar — säg åt lagen att fylla i rad 1–15. Poäng: 1 p för filmen + 1 p för låten = max 30 p.</div>
+    ${musik}
+
+    <h3>🎶 Sånghäftet (7 visor)</h3>
+    <ol>${visor}</ol>
+    <p style="font-size:13px;color:var(--dim)">Förslag: ① + ③ kl 19:00 · resten kl 20:35. Hela texterna finns under fliken Visor.</p>
+
+    <h3>📋 Packlista innan festen</h3>
+    <ul>${pack}</ul>
+  `;
+}
+renderDoc();
 
 /* =================== SKÄRM PÅ =================== */
 if ("wakeLock" in navigator) {
